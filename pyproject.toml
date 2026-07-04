@@ -1,0 +1,28 @@
+[project]
+name = "secureaudit"
+version = "0.1.0"
+description = "Professional Windows Security Assessment Toolkit"
+readme = "README.md"
+requires-python = ">=3.13"
+
+authors = [
+    { name = "Humair Ali" }
+]
+
+dependencies = [
+    "PySide6",
+    "SQLAlchemy",
+    "reportlab",
+    "jinja2",
+    "loguru",
+    "matplotlib"
+]
+
+[tool.black]
+line-length = 88
+
+[tool.ruff]
+line-length = 88
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
