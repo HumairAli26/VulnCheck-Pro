@@ -11,7 +11,7 @@ class ReportsPage(BasePage):
 
     def __init__(self):
         super().__init__()
-        title = QLabel("Generating Report")
+        title = QLabel("Reports")
         title.setFont(
             QFont(
                 fonts.FAMILY,

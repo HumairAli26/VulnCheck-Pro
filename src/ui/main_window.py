@@ -48,6 +48,7 @@ class MainWindow(QMainWindow):
 
         self.central_widget.setLayout(main_layout)
         self.sidebar = Sidebar()
+        self.sidebar.change_page(0)
 
         self.dashboard_page = DashboardPage()
         self.scan_page = ScanPage()
@@ -67,6 +68,10 @@ class MainWindow(QMainWindow):
 
         main_layout.addWidget(self.sidebar)
         main_layout.addWidget(self.page_stack, 1)
+        
+        self.sidebar.page_changed.connect(
+            self.page_stack.setCurrentIndex
+        )
 
     def create_status_bar(self):
         status_bar = QStatusBar()

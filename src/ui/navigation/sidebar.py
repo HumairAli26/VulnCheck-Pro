@@ -11,6 +11,7 @@ NAV_ITEMS = [
     (" About", "  ℹ"),
 ]
 
+from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QFrame, QVBoxLayout
 from src.config.colors import colors
 from src.ui.navigation.nav_button import NavigationButton
@@ -19,6 +20,7 @@ class Sidebar(QFrame):
     """
     Left navigation sidebar.
     """
+    page_changed = Signal(int)
     def __init__(self):
         super().__init__()
         self.setup_ui()
@@ -38,12 +40,23 @@ class Sidebar(QFrame):
         layout.setSpacing(10)
         self.buttons = {}
 
-        for page_name, icon in NAV_ITEMS:
-            button = NavigationButton(
-                f"{icon}  {page_name}"
+        for index, (page_name, icon) in enumerate(NAV_ITEMS):
+            button = NavigationButton(f"{icon}  {page_name}")
+            button.clicked.connect(
+                lambda checked=False, i=index: self.change_page(i)
             )
             layout.addWidget(button)
-            self.buttons[page_name] = button
+            self.buttons[index] = button
         layout.addStretch()
 
         self.setLayout(layout)
+
+    def change_page(self, index: int):
+        """
+        Emit the selected page index and
+        highlight the active button.
+        """
+        for button in self.buttons.values():
+            button.setChecked(False)
+        self.buttons[index].setChecked(True)
+        self.page_changed.emit(index)

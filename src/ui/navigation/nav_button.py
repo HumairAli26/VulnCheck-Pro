@@ -17,6 +17,7 @@ class NavigationButton(QPushButton):
     def setup_ui(self):
         self.setCursor(QCursor(Qt.PointingHandCursor))
         self.setMinimumHeight(48)
+        self.setCheckable(True)
         self.setStyleSheet(
             f"""
             QPushButton {{
@@ -28,15 +29,16 @@ class NavigationButton(QPushButton):
                 text-align: left;
                 font-family: "{fonts.FAMILY}";
                 font-size: {fonts.BODY}pt;
-
             }}
 
             QPushButton:hover {{
                 background-color: {colors.CARD};
             }}
 
-            QPushButton:pressed {{
+            QPushButton:checked {{
                 background-color: {colors.PRIMARY};
+                color: white;
             }}
             """
         )
+        

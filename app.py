@@ -12,6 +12,10 @@ from src.ui.main_window import MainWindow
 
 def main():
     app = QApplication(sys.argv)
+    from src.config.theme import Theme
+    app.setStyleSheet(
+        Theme.application()
+    )
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
