@@ -1,15 +1,21 @@
+"""
+SecureAudit
+Application Entry Point
+Author: Humair Ali
+"""
+
 import sys
 
-from PySide6.QtWidgets import QApplication, QLabel, QMainWindow
+from PySide6.QtWidgets import QApplication
+from src.ui.main_window import MainWindow
 
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("SecureAudit Enterprise")
-        label = QLabel("Welcome to SecureAudit Enterprise")
-        self.setCentralWidget(label)
 
-app = QApplication(sys.argv)
-window = MainWindow()
-window.show()
-app.exec()
+def main():
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec())
+
+
+if __name__ == "__main__":
+    main()
