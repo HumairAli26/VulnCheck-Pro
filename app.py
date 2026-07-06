@@ -17,7 +17,7 @@ def main():
         Theme.application()
     )
     window = MainWindow()
-    window.show()
+    window.showMaximized()
     sys.exit(app.exec())
 
 

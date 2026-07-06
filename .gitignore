@@ -2,11 +2,21 @@ __pycache__/
 *.py[cod]
 *.pyo
 .venv/
+venv/
 .vscode/
-logs/
-*.log
-*.db
-*.sqlite3
+.idea/
+
+# Runtime data (kept as empty tracked folders via .gitkeep)
+logs/*.log
+database/*.db
+database/*.sqlite3
+reports/*.pdf
+reports/*.json
+reports/*.csv
+!**/.gitkeep
+
+config/user_settings.json
+
 .env
 dist/
 build/

@@ -51,17 +51,17 @@ class InfoCard(QFrame):
         layout.setContentsMargins(20, 20, 20, 20)
         layout.setSpacing(12)
 
-        title_label = QLabel(self.title)
-        title_label.setStyleSheet(
+        self.title_label = QLabel(self.title)
+        self.title_label.setStyleSheet(
             f"""
             color:{colors.SUBTEXT};
             font-size:{fonts.BODY}pt;
             """
         )
 
-        value_label = QLabel(self.value)
-        value_label.setAlignment(Qt.AlignCenter)
-        value_label.setStyleSheet(
+        self.value_label = QLabel(self.value)
+        self.value_label.setAlignment(Qt.AlignCenter)
+        self.value_label.setStyleSheet(
             f"""
             color:{self.color};
             font-size:{fonts.TITLE}pt;
@@ -69,8 +69,17 @@ class InfoCard(QFrame):
             """
         )
 
-        layout.addWidget(title_label)
+        layout.addWidget(self.title_label)
         layout.addStretch()
-        layout.addWidget(value_label)
+        layout.addWidget(self.value_label)
         layout.addStretch()
         self.setLayout(layout)
+
+    def set_value(self, value: str, color: str | None = None) -> None:
+        self.value = value
+        self.value_label.setText(value)
+        if color:
+            self.color = color
+            self.value_label.setStyleSheet(
+                f"color:{color}; font-size:{fonts.TITLE}pt; font-weight:bold;"
+            )
