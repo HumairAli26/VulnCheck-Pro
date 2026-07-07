@@ -26,7 +26,8 @@ class ProgressRing(QWidget):
         super().__init__(parent)
         self._value = max(0, min(100, value))
         self._label = label
-        self.setMinimumSize(180, 180)
+        # Increased minimum height slightly to accommodate the text pushed below
+        self.setMinimumSize(180, 210)
 
     def set_value(self, value: int) -> None:
         self._value = max(0, min(100, value))
@@ -43,25 +44,31 @@ class ProgressRing(QWidget):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
 
-        side = min(self.width(), self.height()) - 20
+        # Drawing area for the ring
+        side = min(self.width(), self.height() - 40) - 20
         rect = QRectF(
-            (self.width() - side) / 2, (self.height() - side) / 2, side, side
+            (self.width() - side) / 2, (self.height() - side - 40) / 2, side, side
         )
 
+        # Draw background track
         track_pen = QPen(QColor(colors.CARD), 14, Qt.SolidLine, Qt.RoundCap)
         painter.setPen(track_pen)
         painter.drawArc(rect, 0, 360 * 16)
 
+        # Draw value arc
         value_pen = QPen(self._color_for_value(), 14, Qt.SolidLine, Qt.RoundCap)
         painter.setPen(value_pen)
         span = int(360 * 16 * (self._value / 100))
         painter.drawArc(rect, 90 * 16, -span)
 
+        # Draw center percentage text
         painter.setPen(QColor(colors.TEXT))
         painter.setFont(QFont(fonts.FAMILY, fonts.TITLE, QFont.Bold))
         painter.drawText(rect, Qt.AlignCenter, str(self._value))
 
-        label_rect = QRectF(rect.x(), rect.bottom() - 10, rect.width(), 30)
+        # Draw label text below the ring
+        # Changed from (rect.bottom() - 10) to (rect.bottom() + 5)
+        label_rect = QRectF(rect.x(), rect.bottom() + 15, rect.width(), 30)
         painter.setPen(QColor(colors.SUBTEXT))
-        painter.setFont(QFont(fonts.FAMILY, fonts.SMALL))
+        painter.setFont(QFont(fonts.FAMILY, fonts.BODY))
         painter.drawText(label_rect, Qt.AlignCenter, self._label)

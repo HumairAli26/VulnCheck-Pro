@@ -63,4 +63,12 @@ class FindingCard(QFrame):
         text_col.addWidget(recommendation)
 
         outer.addLayout(text_col, 1)
-        outer.addWidget(RiskBadge(result.severity.value), 0)
+        
+        # Initialize and configure the badge
+        badge = RiskBadge(result.severity.value)
+        
+        # Enforce a fixed width to ensure uniform alignment for all badges
+        # Adjust '120' if your labels are wider/narrower than expected
+        badge.setFixedWidth(120) 
+        
+        outer.addWidget(badge, 0)

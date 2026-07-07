@@ -12,20 +12,36 @@ class Colors:
     INFO = "#3B82F6"
     SUCCESS = "#22C55E"
     WARNING = "#F59E0B"
-    DANGER = "#EF4444"
-    CRITICAL = "#991B1B"
+    DANGER = "#F62B2B"
+    CRITICAL = "#860000"
     TEXT = "#FFFFFF"
     SUBTEXT = "#94A3B8"
 
     @staticmethod
     def for_severity(severity: str) -> str:
-        """Maps a Severity enum value (e.g. 'High') to its accent color."""
-        return {
+        mapping = {
             "Informational": Colors.INFO,
             "Low": Colors.SUCCESS,
             "Medium": Colors.WARNING,
             "High": Colors.DANGER,
             "Critical": Colors.CRITICAL,
-        }.get(severity, Colors.SUBTEXT)
+        }
+        return mapping.get(severity, Colors.SUBTEXT)
+
+    @staticmethod
+    def get_badge_style(severity: str) -> str:
+        """Generates a soft-tinted stylesheet for severity badges."""
+        color = Colors.for_severity(severity)
+        # We use a semi-transparent background (10% opacity)
+        return f"""
+            QLabel {{
+                color: {color};
+                background-color: {color}20;
+                border: 1px solid {color};
+                border-radius: 4px;
+                padding: 2px 8px;
+                font-weight: bold;
+            }}
+        """
 
 colors = Colors()

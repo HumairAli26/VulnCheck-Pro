@@ -28,4 +28,33 @@ class Theme:
         QStatusBar {{
             background:{colors.SIDEBAR};
         }}
+
+        QScrollBar:vertical {{
+            background: transparent;
+            width: 10px;
+        }}
+
+        QScrollBar::handle:vertical {{
+            background: {colors.BORDER};
+            border-radius: 5px;
+            min-height: 30px;
+        }}
+
+        QScrollBar::handle:vertical:hover {{
+            background: {colors.SUBTEXT};
+        }}
+
+        QScrollBar::add-line, QScrollBar::sub-line {{
+            height: 0px;
+        }}
+
+        QFrame#InfoCard {{
+            background-color: {colors.CARD};
+            border: none;
+            border-radius: 14px;
+        }}
+        
+        QFrame#InfoCard:hover {{
+            background-color: {colors.CARD_HOVER};
+        }}
         """

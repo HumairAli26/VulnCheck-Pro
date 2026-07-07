@@ -51,6 +51,8 @@ class DashboardPage(BasePage):
 
         grid = QGridLayout()
         grid.setSpacing(20)
+        grid.setColumnStretch(0, 1)
+        grid.setColumnStretch(1, 1)
         self._cards["System Health"] = InfoCard("System Health", "No scans yet", colors.SUBTEXT)
         self._cards["Network"] = InfoCard("Firewall & Ports", "Not scanned", colors.SUBTEXT)
         self._cards["Data Protection"] = InfoCard("Disk Encryption", "Not scanned", colors.SUBTEXT)
