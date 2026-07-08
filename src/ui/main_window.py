@@ -14,11 +14,12 @@ from src.ui.navigation.sidebar import Sidebar
 from src.ui.pages.about import AboutPage
 from src.ui.pages.dashboard import DashboardPage
 from src.ui.pages.history import HistoryPage
+from src.ui.pages.processes import ProcessesPage
 from src.ui.pages.reports import ReportsPage
 from src.ui.pages.scan import ScanPage
 from src.ui.pages.settings import SettingsPage
 
-_PAGE_DASHBOARD, _PAGE_SCAN, _PAGE_REPORTS, _PAGE_HISTORY, _PAGE_SETTINGS, _PAGE_ABOUT = range(6)
+_PAGE_DASHBOARD, _PAGE_SCAN, _PAGE_PROCESSES, _PAGE_REPORTS, _PAGE_HISTORY, _PAGE_SETTINGS, _PAGE_ABOUT = range(7)
 
 
 class MainWindow(QMainWindow):
@@ -50,6 +51,7 @@ class MainWindow(QMainWindow):
 
         self.dashboard_page = DashboardPage()
         self.scan_page = ScanPage()
+        self.processes_page = ProcessesPage()
         self.reports_page = ReportsPage()
         self.history_page = HistoryPage()
         self.settings_page = SettingsPage()
@@ -59,6 +61,7 @@ class MainWindow(QMainWindow):
         for page in (
             self.dashboard_page,
             self.scan_page,
+            self.processes_page,
             self.reports_page,
             self.history_page,
             self.settings_page,

@@ -7,11 +7,14 @@ Author: Humair Ali
 
 from __future__ import annotations
 
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QCursor
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 
 from src.config.colors import Colors, colors
 from src.config.fonts import fonts
-from src.models.audit_result import AuditResult
+from src.models.audit_result import AuditResult, Severity
+from src.ui.dialogs.remediation_dialog import RemediationDialog
 from src.ui.widgets.risk_badge import RiskBadge
 
 
@@ -63,12 +66,35 @@ class FindingCard(QFrame):
         text_col.addWidget(recommendation)
 
         outer.addLayout(text_col, 1)
-        
-        # Initialize and configure the badge
-        badge = RiskBadge(result.severity.value)
-        
-        # Enforce a fixed width to ensure uniform alignment for all badges
-        # Adjust '120' if your labels are wider/narrower than expected
-        badge.setFixedWidth(120) 
-        
-        outer.addWidget(badge, 0)
+
+        side_col = QVBoxLayout()
+        side_col.setSpacing(8)
+        side_col.addWidget(RiskBadge(result.severity.value))
+
+        if result.severity != Severity.INFO:
+            fix_btn = QPushButton("View Fix Steps")
+            fix_btn.setCursor(QCursor(Qt.PointingHandCursor))
+            fix_btn.setStyleSheet(
+                f"""
+                QPushButton {{
+                    background-color: {accent}22;
+                    color: {accent};
+                    border: 1px solid {accent};
+                    border-radius: 6px;
+                    padding: 4px 10px;
+                    font-size: {fonts.SMALL}pt;
+                    font-weight: 600;
+                }}
+                QPushButton:hover {{
+                    background-color: {accent}44;
+                }}
+                """
+            )
+            fix_btn.clicked.connect(self._show_remediation)
+            side_col.addWidget(fix_btn)
+
+        outer.addLayout(side_col, 0)
+
+    def _show_remediation(self) -> None:
+        dialog = RemediationDialog(self._result, parent=self.window())
+        dialog.exec()

@@ -11,6 +11,7 @@ from src.core.platform.platform_detector import Platform, PlatformDetector
 from src.providers.base import (
     EncryptionProvider,
     FirewallProvider,
+    ScreenLockProvider,
     SystemProvider,
     UpdateProvider,
 )
@@ -73,6 +74,23 @@ def get_update_provider() -> UpdateProvider:
 
         return MacOSUpdateProvider()
     raise UnsupportedPlatformError(f"No update provider for {platform}")
+
+
+def get_screen_lock_provider() -> ScreenLockProvider:
+    platform = _current_platform()
+    if platform is Platform.WINDOWS:
+        from src.providers.windows.screen_lock_provider import WindowsScreenLockProvider
+
+        return WindowsScreenLockProvider()
+    if platform is Platform.LINUX:
+        from src.providers.linux.screen_lock_provider import LinuxScreenLockProvider
+
+        return LinuxScreenLockProvider()
+    if platform is Platform.MACOS:
+        from src.providers.macos.screen_lock_provider import MacOSScreenLockProvider
+
+        return MacOSScreenLockProvider()
+    raise UnsupportedPlatformError(f"No screen lock provider for {platform}")
 
 
 def get_system_provider() -> SystemProvider:

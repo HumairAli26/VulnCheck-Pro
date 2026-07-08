@@ -25,6 +25,18 @@ class ScanWorker(QThread):
     def __init__(self, audits: list[BaseAudit], parent=None):
         super().__init__(parent)
         self._audits = audits
+        for audit in self._audits:
+            audit.set_progress_callback(self._make_subtask_relay(audit))
+
+    def _make_subtask_relay(self, audit: BaseAudit):
+        name = getattr(audit, "name", audit.__class__.__name__)
+
+        def relay(done: int, total: int) -> None:
+            # (0, 0, text) is a sentinel the Scan page reads as "update the
+            # status text only -- this isn't the per-audit progress bar."
+            self.progress.emit(0, 0, f"{name}: {done:,}/{total:,}")
+
+        return relay
 
     def run(self) -> None:  # noqa: N802 - Qt override
         engine = AuditEngine()

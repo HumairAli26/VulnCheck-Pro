@@ -29,7 +29,14 @@ def cmd_scan(args: argparse.Namespace) -> int:
     def on_progress(done: int, total: int, name: str) -> None:
         print(f"[{done}/{total}] {name}")
 
+    for audit in audits:
+        audit_name = getattr(audit, "name", audit.__class__.__name__)
+        audit.set_progress_callback(
+            lambda done, total, n=audit_name: print(f"    {n}: {done:,}/{total:,}", end="\r")
+        )
+
     summary = engine.run(progress_callback=on_progress)
+    print()
 
     print("-" * 60)
     print(f"Security score: {summary.security_score}/100")

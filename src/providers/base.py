@@ -53,6 +53,14 @@ class SystemSnapshot:
     uptime: str = "Unknown"
 
 
+@dataclass
+class ScreenLockStatus:
+    enabled: bool
+    timeout_minutes: int | None = None
+    details: dict[str, str] = field(default_factory=dict)
+    error: str | None = None
+
+
 class FirewallProvider(ABC):
     """Reports whether the host firewall is active."""
 
@@ -72,6 +80,13 @@ class UpdateProvider(ABC):
 
     @abstractmethod
     def get_status(self) -> UpdateStatus: ...
+
+
+class ScreenLockProvider(ABC):
+    """Reports whether the screen locks automatically and requires a password to resume."""
+
+    @abstractmethod
+    def get_status(self) -> ScreenLockStatus: ...
 
 
 class SystemProvider(ABC):

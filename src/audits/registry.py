@@ -14,6 +14,8 @@ from src.audits.base import BaseAudit
 from src.audits.disk_encryption_audit import DiskEncryptionAudit
 from src.audits.firewall_audit import FirewallAudit
 from src.audits.open_ports_audit import OpenPortsAudit
+from src.audits.running_processes_audit import RunningProcessesAudit
+from src.audits.screen_lock_audit import ScreenLockAudit
 from src.audits.system_information import SystemInformationAudit
 from src.audits.updates_audit import UpdatesAudit
 
@@ -32,6 +34,8 @@ FULL_SCAN_AUDITS: list[type[BaseAudit]] = [
     DiskEncryptionAudit,
     UpdatesAudit,
     OpenPortsAudit,
+    ScreenLockAudit,
+    RunningProcessesAudit,
 ]
 
 

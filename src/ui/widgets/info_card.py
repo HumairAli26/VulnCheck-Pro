@@ -5,24 +5,24 @@ Reusable Information Card
 Author: Humair Ali
 """
 
+from __future__ import annotations
+
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
     QFrame,
+    QGraphicsDropShadowEffect,
     QLabel,
     QVBoxLayout,
 )
-
-from PySide6.QtGui import QColor
-from PySide6.QtWidgets import QGraphicsDropShadowEffect
 
 from src.config.colors import colors
 from src.config.fonts import fonts
 
 
 class InfoCard(QFrame):
-    """
-    Professional dashboard card.
-    """
+    """Professional dashboard card with a centered, bold heading."""
+
     def __init__(
         self,
         title: str,
@@ -39,8 +39,6 @@ class InfoCard(QFrame):
         self.setMinimumSize(250, 160)
         self.setObjectName("InfoCard")
         self.setFrameShape(QFrame.NoFrame)
-        
-        # Applying stylesheet to the Frame and all descendant QLabels
         self.setStyleSheet(
             f"""
             QFrame#InfoCard {{
@@ -51,13 +49,9 @@ class InfoCard(QFrame):
             QFrame#InfoCard:hover {{
                 background-color: {colors.CARD_HOVER};
             }}
-            QFrame#InfoCard QLabel {{
-                background-color: transparent;
-            }}
             """
         )
 
-        # Subtle depth effect
         shadow = QGraphicsDropShadowEffect(self)
         shadow.setBlurRadius(24)
         shadow.setXOffset(0)
@@ -82,6 +76,7 @@ class InfoCard(QFrame):
 
         self.value_label = QLabel(self.value)
         self.value_label.setAlignment(Qt.AlignCenter)
+        self.value_label.setWordWrap(True)
         self.value_label.setStyleSheet(
             f"""
             color:{self.color};
@@ -97,11 +92,11 @@ class InfoCard(QFrame):
         self.setLayout(layout)
 
     def set_value(self, value: str, color: str | None = None) -> None:
+        """Update the displayed value (and optionally its accent color)."""
         self.value = value
         self.value_label.setText(value)
         if color:
             self.color = color
-            # We only update the dynamic color property here
             self.value_label.setStyleSheet(
                 f"color:{color}; font-size:{fonts.TITLE + 6}pt; font-weight:800;"
             )

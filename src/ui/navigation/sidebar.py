@@ -18,6 +18,7 @@ from src.ui.navigation.nav_button import NavigationButton
 NAV_ITEMS = [
     "Dashboard",
     "Scan",
+    "Processes",
     "Reports",
     "History",
     "Settings",

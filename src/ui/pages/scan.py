@@ -100,7 +100,11 @@ class ScanPage(BasePage):
         self._worker.start()
 
     def _on_progress(self, done: int, total: int, name: str) -> None:
-        percent = int((done / total) * 100) if total else 100
+        if total == 0:
+            # Sub-task update (e.g. mid-port-scan) -- text only, bar stays put.
+            self.status_label.setText(name)
+            return
+        percent = int((done / total) * 100)
         self.progress_bar.setValue(percent)
         self.status_label.setText(f"[{done}/{total}] {name}")
 
