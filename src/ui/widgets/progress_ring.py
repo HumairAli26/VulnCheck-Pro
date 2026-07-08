@@ -61,7 +61,7 @@ class ProgressRing(QWidget):
         painter.setFont(QFont(fonts.FAMILY, fonts.TITLE, QFont.Bold))
         painter.drawText(rect, Qt.AlignCenter, str(self._value))
 
-        label_rect = QRectF(rect.x(), rect.bottom() - 10, rect.width(), 30)
+        label_rect = QRectF(rect.x(), rect.bottom() + 15, rect.width(), 30)
         painter.setPen(QColor(colors.SUBTEXT))
         painter.setFont(QFont(fonts.FAMILY, fonts.SMALL))
         painter.drawText(label_rect, Qt.AlignCenter, self._label)

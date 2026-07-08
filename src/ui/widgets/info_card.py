@@ -21,7 +21,7 @@ from src.config.fonts import fonts
 
 
 class InfoCard(QFrame):
-    """Professional dashboard card with a centered, bold heading."""
+    """Professional dashboard card with a centered, bold heading and outlined border."""
 
     def __init__(
         self,
@@ -39,15 +39,17 @@ class InfoCard(QFrame):
         self.setMinimumSize(250, 160)
         self.setObjectName("InfoCard")
         self.setFrameShape(QFrame.NoFrame)
+        
         self.setStyleSheet(
             f"""
             QFrame#InfoCard {{
-                background-color: {colors.CARD};
-                border: none;
+                background-color: transparent;
+                border: 2px solid {colors.CARD}; 
                 border-radius: 14px;
             }}
             QFrame#InfoCard:hover {{
-                background-color: {colors.CARD_HOVER};
+                background-color: rgba(255, 255, 255, 5);
+                border-color: {colors.PRIMARY};
             }}
             """
         )
@@ -66,26 +68,24 @@ class InfoCard(QFrame):
         self.title_label = QLabel(self.title)
         self.title_label.setAlignment(Qt.AlignCenter)
         self.title_label.setStyleSheet(
-            f"""
-            color:{colors.SUBTEXT};
-            font-size:{fonts.BODY + 1}pt;
-            font-weight:700;
-            letter-spacing: 0.5px;
-            """
+            f"color:{colors.SUBTEXT}; font-size:{fonts.HEADING + 1}pt; font-weight:700; background-color: transparent;"
         )
 
+        # --- NEW: Added horizontal line separator ---
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
+        line.setStyleSheet(f"background-color: {colors.CARD}; border: none; height: 1px;")
+        
         self.value_label = QLabel(self.value)
         self.value_label.setAlignment(Qt.AlignCenter)
         self.value_label.setWordWrap(True)
         self.value_label.setStyleSheet(
-            f"""
-            color:{self.color};
-            font-size:{fonts.TITLE + 6}pt;
-            font-weight:800;
-            """
+            f"color:{self.color}; font-size:{fonts.TITLE + 6}pt; font-weight:800; background-color: transparent;"
         )
 
         layout.addWidget(self.title_label)
+        layout.addWidget(line)  # Insert the separator
         layout.addStretch()
         layout.addWidget(self.value_label)
         layout.addStretch()
@@ -98,5 +98,5 @@ class InfoCard(QFrame):
         if color:
             self.color = color
             self.value_label.setStyleSheet(
-                f"color:{color}; font-size:{fonts.TITLE + 6}pt; font-weight:800;"
+                f"color:{color}; font-size:{fonts.TITLE + 6}pt; font-weight:800; background-color: transparent;"
             )

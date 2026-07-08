@@ -21,10 +21,12 @@ class RiskBadge(QLabel):
         super().__init__(severity)
         self.setAlignment(Qt.AlignCenter)
         color = Colors.for_severity(severity)
+        
+        # Updated: Removed background-color to make it transparent
         self.setStyleSheet(
             f"""
             QLabel {{
-                background-color: {color}33;
+                background-color: transparent;
                 color: {color};
                 border: 1px solid {color};
                 border-radius: 9px;

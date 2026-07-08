@@ -21,10 +21,6 @@ from src.ui.widgets.info_card import InfoCard
 from src.ui.widgets.progress_ring import ProgressRing
 from src.ui.widgets.section_header import SectionHeader
 
-# Categories surfaced as their own dashboard tile, in display order.
-_TRACKED_CATEGORIES = ["Network", "Data Protection", "Patch Management"]
-
-
 class DashboardPage(BasePage):
     """Landing page: overall score plus a card per audited category."""
 
@@ -53,12 +49,17 @@ class DashboardPage(BasePage):
         grid.setSpacing(20)
         grid.setColumnStretch(0, 1)
         grid.setColumnStretch(1, 1)
+        
+        # Initialize all cards
         self._cards["System Health"] = InfoCard("System Health", "No scans yet", colors.SUBTEXT)
         self._cards["Network"] = InfoCard("Firewall & Ports", "Not scanned", colors.SUBTEXT)
         self._cards["Data Protection"] = InfoCard("Disk Encryption", "Not scanned", colors.SUBTEXT)
         self._cards["Patch Management"] = InfoCard("Updates", "Not scanned", colors.SUBTEXT)
+        self._cards["Screen Lock"] = InfoCard("Screen Lock", "Not scanned", colors.SUBTEXT)
+        self._cards["Running Processes"] = InfoCard("Running Processes", "Not scanned", colors.SUBTEXT)
 
-        positions = [(0, 0), (0, 1), (1, 0), (1, 1)]
+        # Added positions for all 6 cards (3 rows, 2 columns)
+        positions = [(0, 0), (0, 1), (1, 0), (1, 1), (2, 0), (2, 1)]
         for (title, card), pos in zip(self._cards.items(), positions):
             grid.addWidget(card, *pos)
 
@@ -114,13 +115,12 @@ class DashboardPage(BasePage):
             Colors.for_severity(worst_overall.value) if worst_overall else colors.SUCCESS,
         )
 
+        # Updated to include all categories
         self._update_category_card("Network", by_category.get("Network", []), "Firewall & Ports")
-        self._update_category_card(
-            "Data Protection", by_category.get("Data Protection", []), "Disk Encryption"
-        )
-        self._update_category_card(
-            "Patch Management", by_category.get("Patch Management", []), "Updates"
-        )
+        self._update_category_card("Data Protection", by_category.get("Data Protection", []), "Disk Encryption")
+        self._update_category_card("Patch Management", by_category.get("Patch Management", []), "Updates")
+        self._update_category_card("Screen Lock", by_category.get("Screen Lock", []), "Screen Lock")
+        self._update_category_card("Running Processes", by_category.get("Running Processes", []), "Processes")
 
         self.summary_label.setText(
             f"Last scan: {summary.finished_at}  ·  {len(summary.results)} check(s)  ·  "

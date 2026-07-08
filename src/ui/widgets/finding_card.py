@@ -26,10 +26,13 @@ class FindingCard(QFrame):
         self._result = result
         self.setObjectName("FindingCard")
         accent = Colors.for_severity(result.severity.value)
+        
+        # CHANGED: background-color set to transparent, added border
         self.setStyleSheet(
             f"""
             QFrame#FindingCard {{
-                background-color: {colors.CARD};
+                background-color: transparent;
+                border: 2px solid {colors.CARD};
                 border-left: 4px solid {accent};
                 border-radius: 8px;
             }}
@@ -43,22 +46,23 @@ class FindingCard(QFrame):
         text_col = QVBoxLayout()
         text_col.setSpacing(4)
 
+        # CHANGED: Added background-color: transparent to labels
         title = QLabel(f"{result.title}  ·  {result.category}")
         title.setStyleSheet(
             f'color:{colors.TEXT}; font-family:"{fonts.FAMILY}"; '
-            f"font-size:{fonts.BODY}pt; font-weight:600;"
+            f"font-size:{fonts.BODY}pt; font-weight:600; background-color: transparent;"
         )
 
         description = QLabel(result.description)
         description.setWordWrap(True)
         description.setStyleSheet(
-            f'color:{colors.SUBTEXT}; font-family:"{fonts.FAMILY}"; font-size:{fonts.SMALL}pt;'
+            f'color:{colors.SUBTEXT}; font-family:"{fonts.FAMILY}"; font-size:{fonts.SMALL}pt; background-color: transparent;'
         )
 
         recommendation = QLabel(f"Recommendation: {result.recommendation}")
         recommendation.setWordWrap(True)
         recommendation.setStyleSheet(
-            f'color:{colors.INFO}; font-family:"{fonts.FAMILY}"; font-size:{fonts.SMALL}pt;'
+            f'color:{colors.INFO}; font-family:"{fonts.FAMILY}"; font-size:{fonts.SMALL}pt; background-color: transparent;'
         )
 
         text_col.addWidget(title)
@@ -77,7 +81,7 @@ class FindingCard(QFrame):
             fix_btn.setStyleSheet(
                 f"""
                 QPushButton {{
-                    background-color: {accent}22;
+                    background-color: transparent;
                     color: {accent};
                     border: 1px solid {accent};
                     border-radius: 6px;
