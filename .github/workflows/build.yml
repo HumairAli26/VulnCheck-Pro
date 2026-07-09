@@ -1,74 +1,106 @@
-# .github/workflows/build.yml
-# Builds SecureAudit for Windows, macOS, and Linux whenever you push a version tag
-# (e.g. `git tag v0.4.0 && git push --tags`), and attaches the artifacts to a
-# GitHub Release. This solves the "PyInstaller can't cross-compile" problem by
-# running the actual build on each OS's own GitHub-hosted runner.
-
 name: Build SecureAudit
 
 on:
   push:
     tags:
       - "v*"
-  workflow_dispatch: {}   # lets you trigger a build manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: windows-latest
             artifact: SecureAudit-windows
-          - os: macos-latest
-            artifact: SecureAudit-macos
+
           - os: ubuntu-latest
             artifact: SecureAudit-linux
-    runs-on: ${{ matrix.os }}
+
+          - os: macos-latest
+            artifact: SecureAudit-macos
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: "pip"
 
-      - name: Install dependencies
+      - name: Install Dependencies
+        shell: bash
         run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pyinstaller
 
-      - name: Build with PyInstaller
-        run: pyinstaller secureaudit.spec
+      - name: Build SecureAudit
+        run: |
+          pyinstaller secureaudit.spec
 
-      - name: Zip the build (Windows/Linux)
+      - name: Package Windows/Linux Build
         if: matrix.os != 'macos-latest'
         shell: bash
         run: |
           cd dist
-          7z a -tzip ../${{ matrix.artifact }}.zip SecureAudit || zip -r ../${{ matrix.artifact }}.zip SecureAudit
 
-      - name: Zip the .app bundle (macOS)
+          if command -v 7z >/dev/null 2>&1; then
+            7z a -tzip ../${{ matrix.artifact }}.zip SecureAudit
+          else
+            zip -r ../${{ matrix.artifact }}.zip SecureAudit
+          fi
+
+      - name: Package macOS Build
         if: matrix.os == 'macos-latest'
         run: |
           cd dist
           ditto -c -k --sequesterRsrc --keepParent SecureAudit.app ../${{ matrix.artifact }}.zip
 
-      - name: Upload artifact
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
           path: ${{ matrix.artifact }}.zip
+          if-no-files-found: error
 
   release:
+    name: Create GitHub Release
     needs: build
     runs-on: ubuntu-latest
+
     if: startsWith(github.ref, 'refs/tags/')
+
+    permissions:
+      contents: write
+
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
         with:
           path: artifacts
+
+      - name: Display Downloaded Files
+        run: |
+          echo "Downloaded artifacts:"
+          find artifacts -type f
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/**/*.zip
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+          files: |
+            artifacts/**/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
