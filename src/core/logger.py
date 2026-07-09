@@ -16,7 +16,8 @@ _LOG_DIR = Path(__file__).resolve().parents[2] / "logs"
 _LOG_DIR.mkdir(exist_ok=True)
 
 logger.remove()
-logger.add(sys.stderr, level="WARNING")
+if sys.stderr is not None:
+    logger.add(sys.stderr, level="WARNING")
 logger.add(
     _LOG_DIR / "secureaudit.log",
     rotation="5 MB",
