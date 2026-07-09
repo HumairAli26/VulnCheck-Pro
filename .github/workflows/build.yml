@@ -1,0 +1,74 @@
+# .github/workflows/build.yml
+# Builds SecureAudit for Windows, macOS, and Linux whenever you push a version tag
+# (e.g. `git tag v0.4.0 && git push --tags`), and attaches the artifacts to a
+# GitHub Release. This solves the "PyInstaller can't cross-compile" problem by
+# running the actual build on each OS's own GitHub-hosted runner.
+
+name: Build SecureAudit
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch: {}   # lets you trigger a build manually from the Actions tab
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            artifact: SecureAudit-windows
+          - os: macos-latest
+            artifact: SecureAudit-macos
+          - os: ubuntu-latest
+            artifact: SecureAudit-linux
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build with PyInstaller
+        run: pyinstaller secureaudit.spec
+
+      - name: Zip the build (Windows/Linux)
+        if: matrix.os != 'macos-latest'
+        shell: bash
+        run: |
+          cd dist
+          7z a -tzip ../${{ matrix.artifact }}.zip SecureAudit || zip -r ../${{ matrix.artifact }}.zip SecureAudit
+
+      - name: Zip the .app bundle (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          cd dist
+          ditto -c -k --sequesterRsrc --keepParent SecureAudit.app ../${{ matrix.artifact }}.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.artifact }}.zip
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*.zip
