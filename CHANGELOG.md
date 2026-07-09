@@ -4,8 +4,24 @@ All notable changes to SecureAudit are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 > Note: `pyproject.toml` currently reports `0.2.0`. The entries below cover
-> everything built since that version was set — bump it to `0.4.0` (or
+> everything built since that version was set — bump it to `0.4.2` (or
 > later) to match this changelog before your next release/commit.
+
+## [0.4.4] – Packaging Fix: Missing Dependency
+
+### Fixed
+- `psutil` was used by `process_lookup.py` (added in 0.4.0 for process attribution) but was never added to `requirements.txt`, so it was silently missing from every packaged build — `ModuleNotFoundError: No module named 'psutil'` on launch. Added `psutil>=5.9` to `requirements.txt`.
+- `requirements.txt` had regressed back to UTF-16 encoding (originally fixed in 0.2.0). Re-saved as plain UTF-8.
+
+## [0.4.3] – Packaging Fix: Windowed Build Crash
+
+### Fixed
+- Packaged Windows builds (windowed/no-console mode via PyInstaller) crashed on launch with `TypeError: Cannot log to objects of type 'NoneType'`. `sys.stderr` is `None` in a no-console app, and `src/core/logger.py` unconditionally called `logger.add(sys.stderr, ...)`. Now guarded with `if sys.stderr is not None:` before adding the sink; file logging to `logs/secureaudit.log` is unaffected.
+
+## [0.4.1] – Release Fix: YAML fix
+
+### Fixed
+- Changed settings to allow read and write for builds to successfully create releases
 
 ## [0.4.0] – Process-Level Auditing
 
