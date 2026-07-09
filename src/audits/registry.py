@@ -24,6 +24,7 @@ QUICK_SCAN_AUDITS: list[type[BaseAudit]] = [
     SystemInformationAudit,
     FirewallAudit,
     OpenPortsAudit,
+    UpdatesAudit
 ]
 
 #: Audits included in a Full Scan -- everything, including checks that may

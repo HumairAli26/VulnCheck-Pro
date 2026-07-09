@@ -71,7 +71,6 @@ class InfoCard(QFrame):
             f"color:{colors.SUBTEXT}; font-size:{fonts.HEADING + 1}pt; font-weight:700; background-color: transparent;"
         )
 
-        # --- NEW: Added horizontal line separator ---
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)

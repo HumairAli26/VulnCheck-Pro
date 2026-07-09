@@ -13,7 +13,7 @@ from PySide6.QtWidgets import QGridLayout, QHBoxLayout, QLabel, QVBoxLayout
 from src.config.colors import Colors, colors
 from src.config.fonts import fonts
 from src.core.audit_engine import ScanSummary
-from src.models.audit_result import AuditStatus, Severity
+from src.models.audit_result import AuditResult, AuditStatus, Severity
 from src.services.database.db_manager import database_manager
 from src.ui.pages.base_page import BasePage
 from src.ui.widgets.action_button import ActionButton
@@ -49,7 +49,7 @@ class DashboardPage(BasePage):
         grid.setSpacing(20)
         grid.setColumnStretch(0, 1)
         grid.setColumnStretch(1, 1)
-        
+
         # Initialize all cards
         self._cards["System Health"] = InfoCard("System Health", "No scans yet", colors.SUBTEXT)
         self._cards["Network"] = InfoCard("Firewall & Ports", "Not scanned", colors.SUBTEXT)
@@ -58,7 +58,7 @@ class DashboardPage(BasePage):
         self._cards["Screen Lock"] = InfoCard("Screen Lock", "Not scanned", colors.SUBTEXT)
         self._cards["Running Processes"] = InfoCard("Running Processes", "Not scanned", colors.SUBTEXT)
 
-        # Added positions for all 6 cards (3 rows, 2 columns)
+        # Positions for all 6 cards (3 rows, 2 columns)
         positions = [(0, 0), (0, 1), (1, 0), (1, 1), (2, 0), (2, 1)]
         for (title, card), pos in zip(self._cards.items(), positions):
             grid.addWidget(card, *pos)
@@ -109,18 +109,22 @@ class DashboardPage(BasePage):
         for result in summary.results:
             by_category.setdefault(result.category, []).append(result)
 
+        # Screen Lock and Running Processes both live under the "Endpoint
+        # Security" category, so category alone can't tell them apart --
+        # look these two up by title instead.
+        by_title = {result.title: result for result in summary.results}
+
         worst_overall = self._worst_severity(summary.results)
         self._cards["System Health"].set_value(
             "Healthy" if worst_overall in (Severity.INFO, Severity.LOW) else "Needs Attention",
             Colors.for_severity(worst_overall.value) if worst_overall else colors.SUCCESS,
         )
 
-        # Updated to include all categories
         self._update_category_card("Network", by_category.get("Network", []), "Firewall & Ports")
         self._update_category_card("Data Protection", by_category.get("Data Protection", []), "Disk Encryption")
         self._update_category_card("Patch Management", by_category.get("Patch Management", []), "Updates")
-        self._update_category_card("Screen Lock", by_category.get("Screen Lock", []), "Screen Lock")
-        self._update_category_card("Running Processes", by_category.get("Running Processes", []), "Processes")
+        self._update_single_result_card("Screen Lock", by_title.get("Screen Lock"), "Screen Lock")
+        self._update_single_result_card("Running Processes", by_title.get("Running Processes"), "Running Processes")
 
         self.summary_label.setText(
             f"Last scan: {summary.finished_at}  ·  {len(summary.results)} check(s)  ·  "
@@ -136,6 +140,15 @@ class DashboardPage(BasePage):
         label = "Passed" if worst in (Severity.INFO, Severity.LOW) else worst.value
         card.title_label.setText(title)
         card.set_value(label, Colors.for_severity(worst.value))
+
+    def _update_single_result_card(self, key: str, result: AuditResult | None, title: str) -> None:
+        card = self._cards[key]
+        if result is None:
+            card.set_value("Not scanned", colors.SUBTEXT)
+            return
+        label = "Passed" if result.severity in (Severity.INFO, Severity.LOW) else result.severity.value
+        card.title_label.setText(title)
+        card.set_value(label, Colors.for_severity(result.severity.value))
 
     @staticmethod
     def _worst_severity(results: list) -> Severity:
